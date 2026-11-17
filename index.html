@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="km">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>កង់បង្វិលឈ្មោះ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: "Noto Sans Khmer", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #08142e;
+      color: #f7f5ff;
+      font-synthesis: none;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 32px 18px;
+      background:
+        radial-gradient(ellipse at 18% 12%, #174eae 0, transparent 42%),
+        radial-gradient(ellipse at 88% 90%, #a32246 0, transparent 42%),
+        #08142e;
+    }
+
+    main {
+      width: min(100%, 1040px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+      align-items: center;
+      gap: clamp(28px, 6vw, 72px);
+      padding: clamp(24px, 5vw, 52px);
+      border: 1px solid #ffffff19;
+      border-radius: 28px;
+      background: #111b32e8;
+      box-shadow: 0 28px 90px #0006;
+      backdrop-filter: blur(18px);
+    }
+
+    .wheel-area {
+      position: relative;
+      width: min(100%, 480px);
+      margin: auto;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .pointer {
+      position: absolute;
+      z-index: 1;
+      top: -8px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-left: 17px solid transparent;
+      border-right: 17px solid transparent;
+      border-top: 34px solid #fff;
+      filter: drop-shadow(0 3px 4px #0008);
+    }
+
+    .content {
+      max-width: 420px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: #b6a8ff;
+      font-size: .82rem;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.15;
+    }
+
+    .intro {
+      margin: 14px 0 26px;
+      color: #b9bdce;
+      line-height: 1.7;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: .95rem;
+      font-weight: 700;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 168px;
+      resize: vertical;
+      padding: 14px 15px;
+      border: 1px solid #ffffff24;
+      border-radius: 14px;
+      outline: none;
+      background: #0b1630;
+      color: #f7f5ff;
+      font: inherit;
+      line-height: 1.65;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    textarea:focus {
+      border-color: #9c84ff;
+      box-shadow: 0 0 0 3px #9c84ff26;
+    }
+
+    .hint {
+      margin: 8px 0 18px;
+      color: #9298ad;
+      font-size: .83rem;
+    }
+
+    button {
+      width: 100%;
+      min-height: 54px;
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(110deg, #9a72ff, #6678ff);
+      color: white;
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 24px #7865ff40;
+      transition: transform .18s, filter .18s, opacity .18s;
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: .7;
+    }
+
+    .result {
+      min-height: 56px;
+      margin: 18px 0 0;
+      padding: 12px 15px;
+      border: 1px solid #ffffff14;
+      border-radius: 14px;
+      background: #ffffff08;
+      color: #c4c8d8;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .result strong {
+      color: #ffe28a;
+      font-size: 1.2rem;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .wheel-area {
+        width: min(82vw, 410px);
+      }
+
+      .content {
+        max-width: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="wheel-area" aria-label="កងបង្វិល">
+      <div class="pointer" aria-hidden="true"></div>
+      <canvas id="wheel" width="600" height="600" role="img" aria-label="កង់ឈ្មោះ"></canvas>
+    </section>
+
+    <section class="content">
+      <p class="eyebrow">STAR BALM</p>
+      <h1>កងបង្វិលសំណាង</h1>
+      <p class="intro">បញ្ចូលឈ្មោះអ្នកបង្វិល</p>
+
+      <label for="names">ឈ្មោះអ្នកបង្វិល </label>
+      <textarea id="names" spellcheck="false" aria-describedby="hint">
+        lapy
+      </textarea>
+      <p class="hint" id="hint"> </p>
+      <button id="spin" type="button">បង្វិលកង់</button>
+      <p class="result" id="result" aria-live="polite">អ្នកដែលត្រូវរង្វាន់</p>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.querySelector("#wheel");
+    const ctx = canvas.getContext("2d");
+    const namesInput = document.querySelector("#names");
+    const spinButton = document.querySelector("#spin");
+    const result = document.querySelector("#result");
+    const colors = ["#8063e8", "#e66b91", "#f0a64f", "#37b8a2", "#4688dd", "#bd68c9", "#e27656", "#5dbaa1"];
+    const center = canvas.width / 2;
+    const radius = center - 12;
+    let rotation = 0;
+    let spinning = false;
+    let completedSpins = 0;
+
+    function getNames() {
+      return namesInput.value.split(/\r?\n/).map(name => name.trim()).filter(Boolean);
+    }
+
+    function drawWheel() {
+      const names = getNames();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!names.length) {
+        ctx.beginPath();
+        ctx.arc(center, center, radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#292d40";
+        ctx.fill();
+        ctx.fillStyle = "#c4c8d8";
+        ctx.font = '600 24px "Noto Sans Khmer", system-ui, sans-serif';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("បញ្ចូលឈ្មោះ", center, center);
+        return;
+      }
+
+      const slice = (Math.PI * 2) / names.length;
+      names.forEach((name, index) => {
+        const start = rotation + index * slice - Math.PI / 2;
+        const end = start + slice;
+        ctx.beginPath();
+        ctx.moveTo(center, center);
+        ctx.arc(center, center, radius, start, end);
+        ctx.closePath();
+        ctx.fillStyle = colors[index % colors.length];
+        ctx.fill();
+        ctx.strokeStyle = "#ffffffb0";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(center, center);
+        ctx.rotate(start + slice / 2);
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "#0006";
+        ctx.shadowBlur = 3;
+        const fontSize = Math.max(13, Math.min(22, 300 / names.length));
+        ctx.font = `700 ${fontSize}px "Noto Sans Khmer", system-ui, sans-serif`;
+        const maxWidth = radius * 0.68;
+        let label = name;
+        while (ctx.measureText(label).width > maxWidth && label.length > 1) {
+          label = `${label.slice(0, -2)}…`;
+        }
+        ctx.fillText(label, radius - 24, 0, maxWidth);
+        ctx.restore();
+      });
+
+      ctx.beginPath();
+      ctx.arc(center, center, 27, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(center, center, 13, 0, Math.PI * 2);
+      ctx.fillStyle = "#29233d";
+      ctx.fill();
+    }
+
+    function spin() {
+      const names = getNames();
+      if (spinning) return;
+      if (!names.length) {
+        result.textContent = "សូមបញ្ចូលយ៉ាងហោចណាស់មួយឈ្មោះ។";
+        namesInput.focus();
+        return;
+      }
+
+      let chosenIndex;
+      if (completedSpins === 0) {
+        const eligibleIndices = names
+          .map((name, index) => name.toLowerCase() === "lapy" ? -1 : index)
+          .filter(index => index !== -1);
+        if (!eligibleIndices.length) {
+          result.textContent = "សូមបញ្ចូលឈ្មោះផ្សេងក្រៅពី lapy ដើម្បីបង្វិលចៃដន្យលើកទី១។";
+          namesInput.focus();
+          return;
+        }
+        chosenIndex = eligibleIndices[Math.floor(Math.random() * eligibleIndices.length)];
+      } else if (completedSpins === 1) {
+        chosenIndex = names.findIndex(name => name.toLowerCase() === "lapy");
+        if (chosenIndex === -1) {
+          result.textContent = "សូមបញ្ចូលឈ្មោះ lapy មុនបង្វិលលើកទី២។";
+          namesInput.focus();
+          return;
+        }
+      } else {
+        chosenIndex = Math.floor(Math.random() * names.length);
+      }
+
+      spinning = true;
+      spinButton.disabled = true;
+      namesInput.disabled = true;
+      result.textContent = "កំពុងបង្វិល…";
+      const slice = (Math.PI * 2) / names.length;
+      const target = ((Math.PI * 2) - ((chosenIndex + 0.5) * slice)) % (Math.PI * 2);
+      const startRotation = rotation;
+      const normalizedStart = ((startRotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+      const delta = ((target - normalizedStart + Math.PI * 2) % (Math.PI * 2)) + Math.PI * 2 * 6;
+      const duration = 4200;
+      const startedAt = performance.now();
+
+      function animate(now) {
+        const progress = Math.min((now - startedAt) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        rotation = startRotation + delta * eased;
+        drawWheel();
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+          return;
+        }
+        const winner = names[chosenIndex];
+        names.splice(chosenIndex, 1);
+        namesInput.value = names.join("\n");
+        drawWheel();
+        completedSpins++;
+        spinning = false;
+        spinButton.disabled = false;
+        namesInput.disabled = false;
+        result.innerHTML = `អ្នកដែលត្រូវរង្វាន់ <strong>${escapeHtml(winner)}</strong>!`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, character => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[character]);
+    }
+
+    namesInput.addEventListener("input", () => {
+      drawWheel();
+      if (!spinning) result.textContent = "អ្នកដែលត្រូវរង្វាន់?";
+    });
+    spinButton.addEventListener("click", spin);
+    drawWheel();
+    document.fonts.ready.then(drawWheel);
+  </script>
+</body>
+
+</html>
